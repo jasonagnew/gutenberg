@@ -82,7 +82,7 @@ registerBlockType( 'core/heading', {
 		};
 	},
 
-	edit( { attributes, setAttributes, focus, setFocus, mergeBlocks, insertBlockAfter } ) {
+	edit( { attributes, setAttributes, focus, setFocus, mergeBlocks, insertBlocksAfter } ) {
 		const { content, nodeName = 'H2' } = attributes;
 
 		return [
@@ -109,11 +109,12 @@ registerBlockType( 'core/heading', {
 				onChange={ ( value ) => setAttributes( { content: value } ) }
 				onMerge={ mergeBlocks }
 				inline
-				onSplit={ ( before, after ) => {
+				onSplit={ ( before, after, ...blocks ) => {
 					setAttributes( { content: before } );
-					insertBlockAfter( createBlock( 'core/text', {
-						content: after,
-					} ) );
+					insertBlocksAfter( [
+						...blocks,
+						createBlock( 'core/text', { content: after } ),
+					] );
 				} }
 			/>,
 		];

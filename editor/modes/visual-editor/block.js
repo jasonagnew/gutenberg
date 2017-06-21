@@ -22,7 +22,7 @@ import BlockSwitcher from '../../block-switcher';
 import {
 	focusBlock,
 	mergeBlocks,
-	insertBlock,
+	insertBlocks,
 	clearSelectedBlock,
 	startTypingInBlock,
 	stopTypingInBlock,
@@ -242,7 +242,7 @@ class VisualEditorBlock extends Component {
 			'is-hovered': isHovered,
 		} );
 
-		const { onMouseLeave, onFocus, onInsertAfter } = this.props;
+		const { onMouseLeave, onFocus, onInsertBlocksAfter } = this.props;
 
 		// Determine whether the block has props to apply to the wrapper.
 		let wrapperProps;
@@ -294,7 +294,7 @@ class VisualEditorBlock extends Component {
 						focus={ focus }
 						attributes={ block.attributes }
 						setAttributes={ this.setAttributes }
-						insertBlockAfter={ onInsertAfter }
+						insertBlocksAfter={ onInsertBlocksAfter }
 						setFocus={ partial( onFocus, block.uid ) }
 						mergeBlocks={ this.mergeBlocks }
 						id={ block.uid }
@@ -363,8 +363,8 @@ export default connect(
 			} );
 		},
 
-		onInsertAfter( block ) {
-			dispatch( insertBlock( block, ownProps.uid ) );
+		onInsertBlocksAfter( blocks ) {
+			dispatch( insertBlocks( blocks, ownProps.uid ) );
 		},
 
 		onFocus( ...args ) {
