@@ -10,9 +10,9 @@ import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 /**
  * WordPress dependencies
  */
-import { Children } from 'element';
-import { Toolbar } from 'components';
+import { Children, Component } from 'element';
 import { BACKSPACE, ESCAPE } from 'utils/keycodes';
+import { getBlockType } from 'blocks';
 
 /**
  * Internal dependencies
@@ -45,7 +45,7 @@ function FirstChild( { children } ) {
 	return childrenArray[ 0 ] || null;
 }
 
-class VisualEditorBlock extends wp.element.Component {
+class VisualEditorBlock extends Component {
 	constructor() {
 		super( ...arguments );
 		this.bindBlockNode = this.bindBlockNode.bind( this );
@@ -164,8 +164,8 @@ class VisualEditorBlock extends wp.element.Component {
 
 		// Remove block on backspace.
 		if ( BACKSPACE === keyCode ) {
-			event.preventDefault();
 			if ( target === this.node ) {
+				event.preventDefault();
 				onRemove( [ uid ] );
 
 				if ( previousBlock ) {
@@ -174,6 +174,7 @@ class VisualEditorBlock extends wp.element.Component {
 			}
 
 			if ( multiSelectedBlockUids.length ) {
+				event.preventDefault();
 				onRemove( multiSelectedBlockUids );
 			}
 		}
@@ -215,7 +216,7 @@ class VisualEditorBlock extends wp.element.Component {
 
 	render() {
 		const { block, multiSelectedBlockUids } = this.props;
-		const blockType = wp.blocks.getBlockType( block.name );
+		const blockType = getBlockType( block.name );
 		// The block as rendered in the editor is composed of general block UI
 		// (mover, toolbar, wrapper) and the display of the block content, which
 		// is referred to as <BlockEdit />.
@@ -276,14 +277,6 @@ class VisualEditorBlock extends wp.element.Component {
 					>
 						<div className="editor-visual-editor__block-controls">
 							<BlockSwitcher uid={ block.uid } />
-							{ !! blockType.controls && (
-								<Toolbar
-									controls={ blockType.controls.map( ( control ) => ( {
-										...control,
-										onClick: () => control.onClick( block.attributes, this.setAttributes ),
-										isActive: control.isActive ? control.isActive( block.attributes ) : false,
-									} ) ) } />
-							) }
 							<Slot name="Formatting.Toolbar" />
 						</div>
 					</CSSTransitionGroup>
