@@ -198,7 +198,7 @@ class VisualEditorBlockList extends Component {
 					type="text"
 					readOnly
 					className="editor-visual-editor__placeholder"
-					value={ ! blocks.length ? __( 'Write your story' ) : __( 'Write' ) }
+					value={ ! blocks.length ? __( 'Write your story.' ) : __( 'Write…' ) }
 					onFocus={ this.appendDefaultBlock }
 				/>
 			</div>
