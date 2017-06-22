@@ -52,7 +52,7 @@ class VisualEditorBlock extends Component {
 		this.setAttributes = this.setAttributes.bind( this );
 		this.maybeHover = this.maybeHover.bind( this );
 		this.maybeStartTyping = this.maybeStartTyping.bind( this );
-		this.stopTyping = this.stopTyping.bind( this );
+		this.stopTypingOnMouseMove = this.stopTypingOnMouseMove.bind( this );
 		this.removeOrDeselect = this.removeOrDeselect.bind( this );
 		this.mergeBlocks = this.mergeBlocks.bind( this );
 		this.onFocus = this.onFocus.bind( this );
@@ -95,7 +95,7 @@ class VisualEditorBlock extends Component {
 		const { isTyping } = this.props;
 		if ( isTyping !== prevProps.isTyping ) {
 			if ( isTyping ) {
-				document.addEventListener( 'mousemove', this.stopTyping );
+				document.addEventListener( 'mousemove', this.stopTypingOnMouseMove );
 			} else {
 				this.removeStopTypingListener();
 			}
@@ -107,7 +107,7 @@ class VisualEditorBlock extends Component {
 	}
 
 	removeStopTypingListener() {
-		document.removeEventListener( 'mousemove', this.stopTyping );
+		document.removeEventListener( 'mousemove', this.stopTypingOnMouseMove );
 	}
 
 	bindBlockNode( node ) {
@@ -147,8 +147,22 @@ class VisualEditorBlock extends Component {
 		}
 	}
 
-	stopTyping() {
+	stopTypingOnMouseMove( event ) {
+		// We need to check that the mouse really moved
+		// Because Safari trigger mousemove event when we press shift, ctrl...
+		if ( ! this.lastClientX || ! this.lastClientY ) {
+			this.lastClientX = event.clientX;
+			this.lastClientY = event.clientY;
+			return;
+		}
+
+		if ( this.lastClientX === event.clientX && this.lastClientY === event.clientY ) {
+			return;
+		}
+
 		this.props.onStopTyping();
+		this.lastClientX = event.clientX;
+		this.lastClientY = event.clientY;
 	}
 
 	removeOrDeselect( event ) {
